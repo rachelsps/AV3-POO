@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${cliente.id} != null ? 'Editar Cliente' : 'Novo Cliente'">
+        Cadastrar novo cliente
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --cor-escura: #282832;
+            --cor-vinho: #77181E;
+            --cor-vermelho: #A92727;
+            --cor-gelo: #C6D6D6;
+            --cor-gelo-claro: #DEE7E7;
+
+            --bs-body-bg: var(--cor-gelo-claro);
+            --bs-body-color: var(--cor-escura);
+            --bs-primary: var(--cor-vermelho);
+            --bs-primary-rgb: 169, 39, 39;
+        }
+
+        body {
+            background: var(--cor-gelo-claro);
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--cor-escura) !important;
+        }
+
+        /* Card minimalista */
+        .card {
+            border: none;
+            background: white;
+            border-radius: 12px;
+        }
+
+        h3 {
+            font-weight: 600;
+            color: var(--cor-escura);
+        }
+
+        .btn-danger {
+            background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
+        }
+
+        .btn-danger:hover {
+            background-color: #5e1217;
+        }
+
+        .btn-primary {
+            background-color: var(--cor-vermelho);
+            border-color: var(--cor-vermelho);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--cor-vinho);
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+            AutoMarket
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item me-3" th:if="${papel != null}">
+                    <span class="nav-link disabled opacity-75">
+                        Papel: <span th:text="${papel}"></span>
+                    </span>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger fw-semibold" th:href="@{/logout}">
+                        Sair
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- MAIN -->
+<main class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow-sm p-4">
+
+                <h3 class="mb-4"
+                    th:text="${cliente.id} != null ? 'Editar Cliente' : 'Novo Cliente'">
+                    Cadastrar novo Cliente
+                </h3>
+
+                <form th:action="@{/clientes/salvar}" th:object="${cliente}" method="post">
+
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" th:field="*{nome}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">CPF</label>
+                        <input type="text" class="form-control" th:field="*{cpf}"
+                               placeholder="000.000.000-00" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-control" th:field="*{telefone}"
+                               placeholder="(00) 00000-0000">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" th:field="*{email}">
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a class="btn btn-outline-secondary" th:href="@{/clientes}">
+                            Cancelar
+                        </a>
+                        <button class="btn btn-primary px-4" type="submit">Salvar</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

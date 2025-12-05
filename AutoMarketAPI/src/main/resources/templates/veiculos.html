@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Veículos - AutoMarket</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --cor-escura: #282832;
+            --cor-vinho: #77181E;
+            --cor-vermelho: #A92727;
+            --cor-gelo: #C6D6D6;
+            --cor-gelo-claro: #DEE7E7;
+
+            --bs-body-bg: var(--cor-gelo-claro);
+            --bs-body-color: var(--cor-escura);
+            --bs-primary: var(--cor-vermelho);
+        }
+
+        body {
+            background: var(--cor-gelo-claro);
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--cor-escura) !important;
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: var(--cor-vermelho);
+            border-color: var(--cor-vermelho);
+        }
+        .btn-primary:hover {
+            background-color: var(--cor-vinho);
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .btn-warning {
+            background-color: #d9a441;
+            border-color: #d9a441;
+            color: #000;
+        }
+
+        .btn-danger {
+            background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
+        }
+        .btn-danger:hover {
+            background-color: #5e1217;
+        }
+
+        /* Tabela */
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: var(--cor-gelo);
+            font-weight: 600;
+        }
+
+        /* Inputs */
+        .form-control {
+            border-radius: 8px;
+        }
+
+        h2 {
+            font-weight: 600;
+            color: var(--cor-escura);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+            AutoMarket
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item me-3" th:if="${papel != null}">
+                    <span class="nav-link disabled opacity-75">
+                        Papel: <span th:text="${papel}"></span>
+                    </span>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger fw-semibold" th:href="@{/logout}">
+                        Sair
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- MAIN -->
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Veículos</h2>
+
+        <a class="btn btn-primary"
+           th:if="${papel == 'ADMIN'}"
+           th:href="@{/veiculos/novo}">
+            + Novo veículo
+        </a>
+    </div>
+
+    <!-- FILTROS -->
+    <form class="row g-2 mb-3" th:action="@{/veiculos}" method="get">
+        <div class="col-md-4">
+            <input class="form-control" type="text" name="modelo"
+                   placeholder="Buscar por modelo...">
+        </div>
+        <div class="col-md-3">
+            <input class="form-control" type="text" name="marca"
+                   placeholder="Marca...">
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" type="number" name="ano"
+                   placeholder="Ano">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-secondary w-100" type="submit">
+                Filtrar
+            </button>
+        </div>
+    </form>
+
+    <!-- TABELA DE VEÍCULOS -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Modelo</th>
+                <th>Marca</th>
+                <th>Ano</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th class="text-end">Ações</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="veiculo : ${veiculos}">
+                <td th:text="${veiculo.modelo}">Modelo</td>
+                <td th:text="${veiculo.marca}">Marca</td>
+                <td th:text="${veiculo.ano}">2024</td>
+                <td th:text="${veiculo.preco}">R$ 0,00</td>
+                <td th:text="${veiculo.estoque}">10</td>
+
+                <td class="text-end">
+
+                    <!-- Vender -->
+                    <a class="btn btn-sm btn-success"
+                       th:href="@{|/carrinho/adicionar/${veiculo.id}|}">
+                        Vender
+                    </a>
+
+                    <!-- Editar (apenas admin) -->
+                    <a class="btn btn-sm btn-warning"
+                       th:if="${papel == 'ADMIN'}"
+                       th:href="@{|/veiculos/editar/${veiculo.id}|}">
+                        Editar
+                    </a>
+
+                    <!-- Excluir (apenas admin) -->
+                    <form th:if="${papel == 'ADMIN'}"
+                          th:action="@{|/veiculos/deletar/${veiculo.id}|}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Excluir
+                        </button>
+                    </form>
+
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
