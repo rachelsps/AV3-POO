@@ -86,7 +86,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -134,8 +134,10 @@
     <!-- FILTROS -->
     <form class="row g-2 mb-3" th:action="@{/veiculos}" method="get">
         <div class="col-md-4">
-            <input class="form-control" type="text" name="modelo"
-                   placeholder="Buscar por modelo...">
+            <label>
+                <input class="form-control" type="text" name="modelo"
+                       placeholder="Buscar por modelo...">
+            </label>
         </div>
         <div class="col-md-3">
             <input class="form-control" type="text" name="marca"

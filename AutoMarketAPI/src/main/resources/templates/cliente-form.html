@@ -72,7 +72,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -119,8 +119,6 @@
 
                 <form th:action="@{/clientes/salvar}" th:object="${cliente}" method="post">
 
-                    <input type="hidden" th:field="*{id}"/>
-
                     <div class="mb-3">
                         <label class="form-label">Nome</label>
                         <input type="text" class="form-control" th:field="*{nome}" required>
@@ -128,28 +126,15 @@
 
                     <div class="mb-3">
                         <label class="form-label">CPF</label>
-                        <input type="text" class="form-control" th:field="*{cpf}"
-                               placeholder="000.000.000-00" required>
+                        <input type="text" class="form-control" th:field="*{cpf}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Telefone</label>
-                        <input type="text" class="form-control" th:field="*{telefone}"
-                               placeholder="(00) 00000-0000">
+                        <input type="text" class="form-control" th:field="*{telefone}" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" th:field="*{email}">
-                    </div>
-
-                    <div class="mt-4 d-flex justify-content-between">
-                        <a class="btn btn-outline-secondary" th:href="@{/clientes}">
-                            Cancelar
-                        </a>
-                        <button class="btn btn-primary px-4" type="submit">Salvar</button>
-                    </div>
-
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </form>
 
             </div>

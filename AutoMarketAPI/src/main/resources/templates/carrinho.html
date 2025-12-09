@@ -67,7 +67,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -153,11 +153,36 @@
             </span>
         </h4>
 
-        <form th:action="@{/carrinho/finalizar}" method="post">
-            <button class="btn btn-success btn-lg px-4">
-                Finalizar Venda
-            </button>
+        <form th:action="@{/carrinho/desconto}" method="post" class="mb-3">
+            <div class="input-group w-25 ms-auto">
+                <input type="number" name="porcentagem" class="form-control" placeholder="% Desconto">
+                <button class="btn btn-outline-primary" type="submit">Aplicar</button>
+            </div>
         </form>
+
+        <div class="card p-3 mb-3 border-light shadow-sm">
+            <h5 class="mb-3">Finalizar Compra</h5>
+
+            <form th:action="@{/carrinho/finalizar}" method="post">
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Cliente (Opcional)</label>
+                    <select name="clienteId" class="form-select">
+                        <option value="">Venda Direta (Balcão)</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.id}"
+                                th:text="${c.nome + ' (CPF: ' + c.cpf + ')'}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success btn-lg px-4">
+                        Confirmar Venda
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
 </main>

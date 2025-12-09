@@ -13,6 +13,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Administrador
 {
     @Id

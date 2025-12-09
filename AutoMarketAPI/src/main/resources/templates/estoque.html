@@ -85,7 +85,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -139,12 +139,10 @@
 
             <tbody>
                 <tr th:each="v : ${veiculos}">
-
                     <td th:text="${v.modelo}">Modelo</td>
                     <td th:text="${v.marca}">Marca</td>
                     <td th:text="${v.ano}">Ano</td>
                     <td th:text="${v.preco}">Preço</td>
-
                     <td th:text="${v.estoque}">0</td>
 
                     <td>

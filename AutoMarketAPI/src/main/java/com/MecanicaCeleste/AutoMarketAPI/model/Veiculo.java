@@ -1,33 +1,32 @@
 package com.MecanicaCeleste.AutoMarketAPI.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
-@Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "veiculos")
 public class Veiculo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O modelo não pode estar vazio.") //impede de ser vazio
-    private String modelo;
-
-    @NotBlank(message = "A marca não pode estar vazia.") //impede de ser vazio
     private String marca;
+    private String modelo;
+    private Integer ano;
+    private BigDecimal preco; // Alinhado com html
+    private Integer estoque;  // Alinhado com html
 
-    @NotBlank(message = "O ano não pode estar vazio.") //impede de ser vazio
-    private int ano;
 
-    @NotBlank(message = "A categoria não pode estar vazia.") //impede de ser vazio
-    private String categoria;
 
-    @ManyToOne //relação many to one com cliente
-    @JoinColumn(name = "cliente_id")
+    private Integer numeroPortas;
+    private boolean temArCondicionado;
+    private String cor;
+    private String placa;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id") // Nome da coluna no banco MySQL
     private Cliente cliente;
 }

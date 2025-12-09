@@ -80,7 +80,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -163,8 +163,7 @@
             <div class="card h-100 shadow-sm border-success-subtle">
                 <div class="card-body">
                     <h5 class="card-title">Gestão de Estoque</h5>
-                    <p class="card-text">Controle de quantidades e disponibilidade dos veículos.</p>
-                    <a class="btn btn-outline-success" th:href="@{/relatorios/estoque}">
+                    <a class="btn btn-outline-success" th:href="@{/relatorios/estoque(papel=${papel})}">
                         Gerenciar estoque
                     </a>
                 </div>

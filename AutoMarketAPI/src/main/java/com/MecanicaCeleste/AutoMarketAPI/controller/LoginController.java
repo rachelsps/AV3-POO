@@ -1,5 +1,6 @@
 package com.MecanicaCeleste.AutoMarketAPI.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,31 +10,31 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "login"; 
+        return "login";
     }
 
-     @GetMapping("/logout")
-    public String logout() {
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // Limpa a memória ao sair
         return "redirect:/login";
     }
 
     @PostMapping("/login")
-    public String loginSubmit(
-            @RequestParam String username,
-            @RequestParam String password,
-            Model model) {
+    public String loginSubmit(@RequestParam String username, @RequestParam String password,
+                              HttpSession session, Model model) {
 
-        // LOGIN ADMIN
+        // ADMIN
         if (username.equals("admin") && password.equals("123456")) {
-            return "redirect:/home?papel=ADMIN";
+            session.setAttribute("papel", "ADMIN"); // Salva na sessão
+            return "redirect:/home";
         }
 
-        // LOGIN VENDEDOR
+        // VENDEDOR
         if (username.equals("vendedor") && password.equals("123456")) {
-            return "redirect:/home?papel=VENDEDOR";
+            session.setAttribute("papel", "VENDEDOR"); // Salva na sessão
+            return "redirect:/home";
         }
 
-        // LOGIN INVÁLIDO
         model.addAttribute("erro", "Usuário ou senha incorretos.");
         return "login";
     }

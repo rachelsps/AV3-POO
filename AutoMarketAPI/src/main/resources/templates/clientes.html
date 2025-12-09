@@ -80,7 +80,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home}">
+        <a class="navbar-brand fs-4 fw-bold" th:href="@{/home(papel=${papel})}">
             AutoMarket
         </a>
 
@@ -152,7 +152,6 @@
                     <th>Nome</th>
                     <th>CPF</th>
                     <th>Telefone</th>
-                    <th>Email</th>
                     <th class="text-end">Ações</th>
                 </tr>
             </thead>
@@ -162,7 +161,6 @@
                     <td th:text="${c.nome}">Nome</td>
                     <td th:text="${c.cpf}">CPF</td>
                     <td th:text="${c.telefone}">Telefone</td>
-                    <td th:text="${c.email}">Email</td>
 
                     <td class="text-end">
 
