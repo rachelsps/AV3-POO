@@ -10,35 +10,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/usuarios") // Mapeado conforme usuários.html
+@RequestMapping("/vendedores") 
 public class VendedorController {
 
     @Autowired
     private VendedorRepository repository;
 
-    // Listar todos os usuários/vendedores
+    // Listar vendedores
     @GetMapping
     public String listar(Model model) {
         List<Vendedor> vendedores = repository.findAll();
         model.addAttribute("usuarios", vendedores);
-        return "usuarios"; // Retorna usuarios.html
+        model.addAttribute("tipoUsuario", "Vendedor");
+        return "usuarios"; // reutiliza usuarios.html
     }
 
-    // Exibir formulário de novo vendedor
+    // Formulário novo vendedor
     @GetMapping("/novo")
     public String novo(Model model) {
         model.addAttribute("usuario", new Vendedor());
-        return "usuario-form"; // Retorna usuario-form.html
+        return "usuario-form";
     }
 
-    // Salvar ou Editar
+    // Salvar ou editar
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute("usuario") Vendedor vendedor) {
         repository.save(vendedor);
-        return "redirect:/usuarios";
+        return "redirect:/vendedores";
     }
 
-    // Abrir para edição
+    // Editar
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
         Vendedor v = repository.findById(id).orElseThrow();
@@ -46,10 +47,10 @@ public class VendedorController {
         return "usuario-form";
     }
 
-    // Excluir vendedor
+    // Excluir
     @PostMapping("/deletar/{id}")
     public String deletar(@PathVariable Long id) {
         repository.deleteById(id);
-        return "redirect:/usuarios";
+        return "redirect:/vendedores";
     }
 }

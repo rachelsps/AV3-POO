@@ -8,33 +8,39 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class LoginController {
 
+    // Tela de login (GET)
     @GetMapping("/login")
     public String loginPage() {
-        return "login";
+        return "login"; 
     }
 
+    // Logout
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Limpa a memória ao sair
+        session.invalidate(); 
         return "redirect:/login";
     }
 
-    @PostMapping("/login")
-    public String loginSubmit(@RequestParam String username, @RequestParam String password,
-                              HttpSession session, Model model) {
+    @PostMapping("/login-process")
+    public String loginSubmit(
+            @RequestParam String username,
+            @RequestParam String password,
+            HttpSession session,
+            Model model) {
 
         // ADMIN
-        if (username.equals("admin") && password.equals("123456")) {
-            session.setAttribute("papel", "ADMIN"); // Salva na sessão
+        if ("admin".equals(username) && "123456".equals(password)) {
+            session.setAttribute("papel", "ADMIN");
             return "redirect:/home";
         }
 
         // VENDEDOR
-        if (username.equals("vendedor") && password.equals("123456")) {
-            session.setAttribute("papel", "VENDEDOR"); // Salva na sessão
+        if ("vendedor".equals(username) && "123456".equals(password)) {
+            session.setAttribute("papel", "VENDEDOR");
             return "redirect:/home";
         }
 
+        // LOGIN INVÁLIDO
         model.addAttribute("erro", "Usuário ou senha incorretos.");
         return "login";
     }

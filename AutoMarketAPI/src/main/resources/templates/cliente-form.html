@@ -20,19 +20,16 @@
             --bs-body-bg: var(--cor-gelo-claro);
             --bs-body-color: var(--cor-escura);
             --bs-primary: var(--cor-vermelho);
-            --bs-primary-rgb: 169, 39, 39;
         }
 
         body {
             background: var(--cor-gelo-claro);
         }
 
-        /* Navbar */
         .navbar {
             background-color: var(--cor-escura) !important;
         }
 
-        /* Card minimalista */
         .card {
             border: none;
             background: white;
@@ -44,15 +41,6 @@
             color: var(--cor-escura);
         }
 
-        .btn-danger {
-            background-color: var(--cor-vinho);
-            border-color: var(--cor-vinho);
-        }
-
-        .btn-danger:hover {
-            background-color: #5e1217;
-        }
-
         .btn-primary {
             background-color: var(--cor-vermelho);
             border-color: var(--cor-vermelho);
@@ -60,6 +48,7 @@
 
         .btn-primary:hover {
             background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
         }
 
         .form-label {
@@ -82,7 +71,6 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item me-3" th:if="${papel != null}">
@@ -98,11 +86,9 @@
                 </li>
 
             </ul>
-
         </div>
     </div>
 </nav>
-
 
 <!-- MAIN -->
 <main class="container py-5">
@@ -112,6 +98,13 @@
 
             <div class="card shadow-sm p-4">
 
+                <!-- Botão voltar -->
+                <div class="mb-3">
+                    <a class="btn btn-primary" th:href="@{/home}">
+                        ← Voltar para a Home
+                    </a>
+                </div>
+
                 <h3 class="mb-4"
                     th:text="${cliente.id} != null ? 'Editar Cliente' : 'Novo Cliente'">
                     Cadastrar novo Cliente
@@ -119,22 +112,57 @@
 
                 <form th:action="@{/clientes/salvar}" th:object="${cliente}" method="post">
 
+                    <!-- Nome -->
                     <div class="mb-3">
                         <label class="form-label">Nome</label>
-                        <input type="text" class="form-control" th:field="*{nome}" required>
+                        <input type="text"
+                               class="form-control"
+                               th:field="*{nome}"
+                               placeholder="Ex: Maria Souza"
+                               required>
+                        <div class="text-danger small"
+                             th:if="${#fields.hasErrors('nome')}"
+                             th:errors="*{nome}">
+                            Erro no nome
+                        </div>
                     </div>
 
+                    <!-- CPF -->
                     <div class="mb-3">
                         <label class="form-label">CPF</label>
-                        <input type="text" class="form-control" th:field="*{cpf}" required>
+                        <input type="text"
+                               class="form-control"
+                               th:field="*{cpf}"
+                               inputmode="numeric"
+                               maxlength="11"
+                               placeholder="Apenas números, ex: 12345678900"
+                               required>
+                        <div class="text-danger small"
+                             th:if="${#fields.hasErrors('cpf')}"
+                             th:errors="*{cpf}">
+                            Erro no CPF
+                        </div>
                     </div>
 
+                    <!-- Telefone -->
                     <div class="mb-3">
                         <label class="form-label">Telefone</label>
-                        <input type="text" class="form-control" th:field="*{telefone}" required>
+                        <input type="text"
+                               class="form-control"
+                               th:field="*{telefone}"
+                               inputmode="numeric"
+                               maxlength="13"
+                               placeholder="Apenas números, ex: 71987654321"
+                               required>
+                        <div class="text-danger small"
+                             th:if="${#fields.hasErrors('telefone')}"
+                             th:errors="*{telefone}">
+                            Erro no telefone
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Salvar</button>
+
                 </form>
 
             </div>

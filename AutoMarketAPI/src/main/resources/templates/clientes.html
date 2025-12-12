@@ -18,19 +18,17 @@
             --bs-body-bg: var(--cor-gelo-claro);
             --bs-body-color: var(--cor-escura);
             --bs-primary: var(--cor-vermelho);
-            --bs-primary-rgb: 169, 39, 39;
+            --bs-primary-rgb: 169,39,39;
         }
 
         body {
             background: var(--cor-gelo-claro);
         }
 
-        /* Navbar minimalista */
         .navbar {
             background-color: var(--cor-escura) !important;
         }
 
-        /* Tabela minimalista */
         .table {
             background: white;
             border-radius: 10px;
@@ -41,7 +39,6 @@
             background: var(--cor-gelo);
         }
 
-        /* Botões */
         .btn-primary {
             background-color: var(--cor-vermelho);
             border-color: var(--cor-vermelho);
@@ -62,10 +59,6 @@
         }
         .btn-danger:hover {
             background-color: #5e1217;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: var(--cor-gelo);
         }
 
         h2 {
@@ -90,7 +83,6 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item me-3" th:if="${papel != null}">
@@ -106,14 +98,27 @@
                 </li>
 
             </ul>
-
         </div>
     </div>
 </nav>
 
-
 <!-- MAIN -->
 <main class="container py-4">
+
+    <!-- BOTÃO VOLTAR -->
+    <div class="mb-3">
+        <a class="btn btn-primary" th:href="@{/home}">
+            ← Voltar para a Home
+        </a>
+    </div>
+
+    <!-- MENSAGEM DE SUCESSO -->
+    <div th:if="${mensagem}"
+         class="alert alert-success alert-dismissible fade show mb-3"
+         role="alert">
+        <span th:text="${mensagem}">Mensagem de sucesso</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Clientes</h2>
@@ -125,7 +130,6 @@
 
     <!-- FILTRO -->
     <form class="row g-2 mb-4" th:action="@{/clientes}" method="get">
-
         <div class="col-md-6">
             <input class="form-control" type="text" name="nome"
                    placeholder="Buscar por nome...">
@@ -141,7 +145,6 @@
                 Filtrar
             </button>
         </div>
-
     </form>
 
     <!-- TABELA -->
@@ -163,14 +166,11 @@
                     <td th:text="${c.telefone}">Telefone</td>
 
                     <td class="text-end">
-
-                        <!-- EDITAR -->
                         <a class="btn btn-sm btn-warning me-1"
                            th:href="@{|/clientes/editar/${c.id}|}">
                             Editar
                         </a>
 
-                        <!-- EXCLUIR (ADMIN) -->
                         <form th:if="${papel == 'ADMIN'}"
                               th:action="@{|/clientes/deletar/${c.id}|}"
                               method="post"
@@ -179,15 +179,20 @@
                                 Excluir
                             </button>
                         </form>
-
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-</main>
+    <!-- Botão Ir para o Carrinho -->
+    <div class="text-end mt-3">
+        <a class="btn btn-primary" th:href="@{/carrinho}">
+            Ir para o Carrinho
+        </a>
+    </div>
 
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

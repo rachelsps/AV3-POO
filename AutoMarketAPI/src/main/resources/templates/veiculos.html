@@ -29,13 +29,14 @@
             background-color: var(--cor-escura) !important;
         }
 
-        /* Botões */
+        /* Botões principais (vermelhos) */
         .btn-primary {
             background-color: var(--cor-vermelho);
             border-color: var(--cor-vermelho);
         }
         .btn-primary:hover {
             background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
         }
 
         .btn-success {
@@ -55,6 +56,7 @@
         }
         .btn-danger:hover {
             background-color: #5e1217;
+            border-color: #5e1217;
         }
 
         /* Tabela */
@@ -77,6 +79,23 @@
         h2 {
             font-weight: 600;
             color: var(--cor-escura);
+        }
+
+        /* Badges para situação de estoque */
+        .badge {
+            font-size: 0.85rem;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .badge.bg-success {
+            background-color: #4caf50 !important;
+        }
+        .badge.bg-warning {
+            background-color: #ffcc00 !important;
+        }
+        .badge.bg-danger {
+            background-color: var(--cor-vermelho) !important;
         }
     </style>
 </head>
@@ -121,6 +140,19 @@
 <!-- MAIN -->
 <main class="container py-4">
 
+    <!-- Mensagem de sucesso ao adicionar ao carrinho -->
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Botão Voltar para a Home -->
+    <div class="mb-3">
+        <a class="btn btn-primary" th:href="@{/home}">
+            ← Voltar para a Home
+        </a>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Veículos</h2>
 
@@ -134,10 +166,8 @@
     <!-- FILTROS -->
     <form class="row g-2 mb-3" th:action="@{/veiculos}" method="get">
         <div class="col-md-4">
-            <label>
-                <input class="form-control" type="text" name="modelo"
-                       placeholder="Buscar por modelo...">
-            </label>
+            <input class="form-control" type="text" name="modelo"
+                   placeholder="Buscar por modelo...">
         </div>
         <div class="col-md-3">
             <input class="form-control" type="text" name="marca"
@@ -164,6 +194,7 @@
                 <th>Ano</th>
                 <th>Preço</th>
                 <th>Estoque</th>
+                <th>Situação</th>
                 <th class="text-end">Ações</th>
             </tr>
             </thead>
@@ -175,6 +206,27 @@
                 <td th:text="${veiculo.ano}">2024</td>
                 <td th:text="${veiculo.preco}">R$ 0,00</td>
                 <td th:text="${veiculo.estoque}">10</td>
+
+                <!-- Situação do estoque -->
+                <td>
+                    <!-- Estoque normal -->
+                    <span class="badge bg-success"
+                          th:if="${veiculo.estoque > 5}">
+                        OK
+                    </span>
+
+                    <!-- Baixo estoque -->
+                    <span class="badge bg-warning text-dark"
+                          th:if="${veiculo.estoque <= 5 && veiculo.estoque > 0}">
+                        Baixo estoque
+                    </span>
+
+                    <!-- Sem estoque -->
+                    <span class="badge bg-danger"
+                          th:if="${veiculo.estoque == 0}">
+                        Sem estoque
+                    </span>
+                </td>
 
                 <td class="text-end">
 
@@ -205,6 +257,13 @@
 
             </tbody>
         </table>
+    </div>
+
+    <!-- Botão Ir para o Carrinho -->
+    <div class="text-end mt-3">
+        <a class="btn btn-primary" th:href="@{/carrinho}">
+            Ir para o Carrinho
+        </a>
     </div>
 
 </main>

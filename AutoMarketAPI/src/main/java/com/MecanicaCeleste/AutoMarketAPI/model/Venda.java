@@ -19,7 +19,8 @@ public class Venda {
     private Veiculo veiculo;
 
     @ManyToOne
-    private Vendedor vendedor;
+    @JoinColumn(name = "vendedor_id", referencedColumnName = "id")
+    private Usuario vendedor;
 
     private BigDecimal precoVenda;
     private LocalDateTime dataVenda = LocalDateTime.now();

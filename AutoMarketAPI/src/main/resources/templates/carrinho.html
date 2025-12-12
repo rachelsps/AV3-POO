@@ -18,19 +18,18 @@
             --bs-body-bg: var(--cor-gelo-claro);
             --bs-body-color: var(--cor-escura);
             --bs-primary: var(--cor-vermelho);
-            --bs-primary-rgb: 169, 39, 39;
         }
 
         body {
             background: var(--cor-gelo-claro);
         }
 
-        /* Navbar minimalista */
+        /* Navbar */
         .navbar {
             background-color: var(--cor-escura) !important;
         }
 
-        /* Cards e tabelas com visual clean */
+        /* Tabela */
         .table {
             background: white;
             border-radius: 10px;
@@ -41,18 +40,22 @@
             background: var(--cor-gelo);
         }
 
-        /* Botões */
-        .btn-primary, .btn-success {
-            border-radius: 6px;
+        .btn-primary {
+            background-color: var(--cor-vermelho);
+            border-color: var(--cor-vermelho);
+        }
+        .btn-primary:hover {
+            background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
         }
 
         .btn-danger {
             background-color: var(--cor-vinho);
             border-color: var(--cor-vinho);
         }
-
         .btn-danger:hover {
             background-color: #5e1217;
+            border-color: #5e1217;
         }
 
         h2, h4 {
@@ -99,6 +102,19 @@
 
 
 <main class="container py-4">
+
+    <!-- Mensagem de sucesso -->
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Botão Voltar para Home -->
+    <div class="mb-3">
+        <a class="btn btn-primary" th:href="@{/home}">
+            ← Voltar para a Home
+        </a>
+    </div>
 
     <h2 class="mb-4">Carrinho de Compras</h2>
 
@@ -153,27 +169,44 @@
             </span>
         </h4>
 
-        <form th:action="@{/carrinho/desconto}" method="post" class="mb-3">
-            <div class="input-group w-25 ms-auto">
-                <input type="number" name="porcentagem" class="form-control" placeholder="% Desconto">
-                <button class="btn btn-outline-primary" type="submit">Aplicar</button>
-            </div>
-        </form>
-
+        <!-- FINALIZAR VENDA -->
         <div class="card p-3 mb-3 border-light shadow-sm">
-            <h5 class="mb-3">Finalizar Compra</h5>
+            <h5 class="mb-3 text-start">Finalizar Compra</h5>
 
             <form th:action="@{/carrinho/finalizar}" method="post">
 
-                <div class="mb-3">
-                    <label class="form-label text-muted small">Cliente (Opcional)</label>
-                    <select name="clienteId" class="form-select">
-                        <option value="">Venda Direta (Balcão)</option>
-                        <option th:each="c : ${clientes}"
-                                th:value="${c.id}"
-                                th:text="${c.nome + ' (CPF: ' + c.cpf + ')'}">
+                <!-- Cliente -->
+                <div class="mb-3 text-start">
+                    <label class="form-label text-muted small">Cliente (opcional)</label>
+                    <div class="d-flex gap-2">
+                        <select name="clienteId" class="form-select">
+                            <option value="">Selecione um cliente...</option>
+                            <option th:each="c : ${clientes}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nome + ' (CPF: ' + c.cpf + ')'}">
+                            </option>
+                        </select>
+
+                        <a class="btn btn-outline-secondary" th:href="@{/clientes/novo}">
+                            Cadastrar cliente
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Vendedor / Administrador -->
+                <div class="mb-3 text-start">
+                    <label class="form-label">Venda realizada por</label>
+                    <select class="form-select" name="vendedorId" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="u : ${usuariosSistema}"
+                                th:value="${u.id}"
+                                th:text="${u.nome + ' (' + u.papel + ')'}">
                         </option>
                     </select>
+
+                    <small class="text-muted d-block mt-1">
+                        (Lista puxada de “Usuários do Sistema”)
+                    </small>
                 </div>
 
                 <div class="text-end">
@@ -181,6 +214,7 @@
                         Confirmar Venda
                     </button>
                 </div>
+
             </form>
         </div>
     </div>

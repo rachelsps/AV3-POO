@@ -20,29 +20,23 @@
             --bs-primary: var(--cor-vermelho);
         }
 
-        body {
-            background: var(--cor-gelo-claro);
+        body { background: var(--cor-gelo-claro); }
+        .navbar { background-color: var(--cor-escura) !important; }
+
+        .btn-primary {
+            background-color: var(--cor-vermelho);
+            border-color: var(--cor-vermelho);
+        }
+        .btn-primary:hover {
+            background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
         }
 
-        .navbar {
-            background-color: var(--cor-escura) !important;
-        }
+        h2 { font-weight: 600; color: var(--cor-escura); }
 
-        h2 {
-            font-weight: 600;
-            color: var(--cor-escura);
-        }
+        .form-control { border-radius: 8px; }
+        .btn-outline-secondary:hover { background-color: var(--cor-gelo); }
 
-        /* Estilo dos filtros */
-        .form-control {
-            border-radius: 8px;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: var(--cor-gelo);
-        }
-
-        /* Tabela moderna */
         .table {
             background: white;
             border-radius: 10px;
@@ -54,10 +48,7 @@
             font-weight: 600;
         }
 
-        /* Total vendido */
-        h4 span {
-            color: var(--cor-vinho) !important;
-        }
+        h4 span { color: var(--cor-vinho) !important; }
     </style>
 </head>
 
@@ -76,7 +67,6 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item me-3" th:if="${papel != null}">
@@ -92,18 +82,23 @@
                 </li>
 
             </ul>
-
         </div>
     </div>
 </nav>
 
-
 <!-- MAIN -->
 <main class="container py-4" th:if="${papel == 'ADMIN'}">
 
+    <!-- BOTÃO VOLTAR -->
+    <div class="mb-3">
+        <a class="btn btn-primary" th:href="@{/relatorios}">
+            ← Voltar
+        </a>
+    </div>
+
     <h2 class="mb-4">Relatório de Vendas</h2>
 
-    <!-- FILTROS -->
+    <!-- FILTROS (opcional, só mantém se seu controller realmente filtra) -->
     <form class="row g-2 mb-4" th:action="@{/relatorios/vendas}" method="get">
 
         <div class="col-md-4">
@@ -117,7 +112,7 @@
             <input class="form-control"
                    type="text"
                    name="vendedor"
-                   placeholder="Filtrar por vendedor">
+                   placeholder="Filtrar por vendedor (nome/email)">
         </div>
 
         <div class="col-md-2">
@@ -127,7 +122,7 @@
         </div>
 
         <div class="col-md-2">
-            <button class="btn btn-outline-secondary w-100">Filtrar</button>
+            <button class="btn btn-outline-secondary w-100" type="submit">Filtrar</button>
         </div>
 
     </form>
@@ -136,38 +131,70 @@
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
-                <tr>
-                    <th>ID Venda</th>
-                    <th>Cliente</th>
-                    <th>Vendedor</th>
-                    <th>Veículo</th>
-                    <th>Preço</th>
-                    <th>Data</th>
-                </tr>
+            <tr>
+                <th>ID</th>
+                <th>Comprador</th>
+                <th>Vendido por</th>
+                <th>Veículo</th>
+                <th>Preço</th>
+                <th>Data</th>
+            </tr>
             </thead>
 
             <tbody>
             <tr th:each="venda : ${vendas}">
                 <td th:text="${venda.id}">1</td>
 
-                <td th:text="${venda.cliente != null} ? ${venda.cliente.nome} : 'Não informado'">
-                    Cliente
-                </td>
-
-                <td th:text="${venda.vendedor != null} ? ${venda.vendedor.nome} : 'Sistema/Online'">
-                    Vendedor
-                </td>
-
+                <!-- COMPRADOR -->
                 <td>
-                    <span th:text="${venda.veiculo != null} ? ${venda.veiculo.modelo} : 'Veículo Removido'">Modelo</span>
-                    -
-                    <span th:text="${venda.veiculo != null} ? ${venda.veiculo.ano} : ''">Ano</span>
+                    <div th:if="${venda.cliente != null}">
+                        <div class="fw-semibold" th:text="${venda.cliente.nome}">Nome Cliente</div>
+                        <small class="text-muted"
+                               th:text="${'CPF: ' + venda.cliente.cpf}">
+                            CPF: 000.000.000-00
+                        </small>
+                    </div>
+                    <span th:if="${venda.cliente == null}" class="text-muted">
+                        Não informado
+                    </span>
                 </td>
 
-                <td th:text="${venda.preco}">R$ 0,00</td>
+                <!-- VENDEDOR (USUARIO) -->
+                <td>
+                    <div th:if="${venda.vendedor != null}">
+                        <div class="fw-semibold" th:text="${venda.vendedor.nome}">Nome Usuário</div>
+                        <small class="text-muted"
+                               th:text="${venda.vendedor.email}">
+                            email@exemplo.com
+                        </small>
+                        <div>
+                            <span class="badge text-bg-secondary"
+                                  th:text="${venda.vendedor.papel}">
+                                ADMIN
+                            </span>
+                        </div>
+                    </div>
+                    <span th:if="${venda.vendedor == null}" class="text-muted">
+                        Não informado
+                    </span>
+                </td>
 
-                <td th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy')}">
-                    01/01/2025
+                <!-- VEÍCULO -->
+                <td>
+                    <span th:text="${venda.veiculo != null ? venda.veiculo.modelo : 'Veículo removido'}">Modelo</span>
+                    <span th:if="${venda.veiculo != null}"
+                          class="text-muted"
+                          th:text="${' - ' + venda.veiculo.ano}">
+                        - 2025
+                    </span>
+                </td>
+
+                <!-- PREÇO -->
+                <td th:text="${venda.precoVenda}">R$ 0,00</td>
+
+                <!-- DATA -->
+                <td th:text="${venda.dataVenda != null ? #temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm') : 'Sem data'}">
+                    01/01/2025 12:00
                 </td>
             </tr>
             </tbody>
@@ -186,8 +213,6 @@
 
 </main>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

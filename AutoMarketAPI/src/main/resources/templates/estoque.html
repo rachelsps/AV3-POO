@@ -25,12 +25,10 @@
             background: var(--cor-gelo-claro);
         }
 
-        /* Navbar */
         .navbar {
             background-color: var(--cor-escura) !important;
         }
 
-        /* Tabela minimalista */
         .table {
             background: white;
             border-radius: 10px;
@@ -41,12 +39,19 @@
             background: var(--cor-gelo);
         }
 
-        /* Botões */
         .btn-warning {
             background-color: #d9a441;
             border-color: #d9a441;
             color: #000;
         }
+
+        .btn-primary {
+            background-color: var(--cor-vermelho);
+            border-color: var(--cor-vermelho);
+        }
+        .btn-primary:hover {
+            background-color: var(--cor-vinho);
+            border-color: var(--cor-vinho);
 
         .btn-danger {
             background-color: var(--cor-vinho);
@@ -61,7 +66,6 @@
             color: var(--cor-escura);
         }
 
-        /* Badges suavizadas */
         .badge {
             font-size: 0.85rem;
             padding: 6px 10px;
@@ -95,7 +99,6 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-
             <ul class="navbar-nav ms-auto">
 
                 <li class="nav-item me-3" th:if="${papel != null}">
@@ -111,14 +114,19 @@
                 </li>
 
             </ul>
-
         </div>
     </div>
 </nav>
 
-
 <!-- MAIN -->
 <main class="container py-4" th:if="${papel == 'ADMIN'}">
+
+    <!-- BOTÃO VOLTAR -->
+    <div class="mb-3">
+        <a class="btn btn-primary" th:href="@{/relatorios}">
+            ← Voltar
+        </a>
+    </div>
 
     <h2 class="mb-4">Controle de Estoque</h2>
 
@@ -146,19 +154,16 @@
                     <td th:text="${v.estoque}">0</td>
 
                     <td>
-                        <!-- Estoque normal -->
                         <span class="badge bg-success"
                               th:if="${v.estoque > 5}">
                             OK
                         </span>
 
-                        <!-- Baixo estoque -->
                         <span class="badge bg-warning text-dark"
                               th:if="${v.estoque <= 5 && v.estoque > 0}">
                             Baixo estoque
                         </span>
 
-                        <!-- Sem estoque -->
                         <span class="badge bg-danger"
                               th:if="${v.estoque == 0}">
                             Sem estoque
@@ -174,12 +179,10 @@
 
                 </tr>
             </tbody>
-
         </table>
     </div>
 
 </main>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

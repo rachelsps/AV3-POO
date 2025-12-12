@@ -1,9 +1,11 @@
 package com.MecanicaCeleste.AutoMarketAPI.controller;
 
 import com.MecanicaCeleste.AutoMarketAPI.model.Cliente;
+import com.MecanicaCeleste.AutoMarketAPI.model.Usuario;
 import com.MecanicaCeleste.AutoMarketAPI.model.Veiculo;
 import com.MecanicaCeleste.AutoMarketAPI.model.Venda;
 import com.MecanicaCeleste.AutoMarketAPI.repository.ClienteRepository;
+import com.MecanicaCeleste.AutoMarketAPI.repository.UsuarioRepository;
 import com.MecanicaCeleste.AutoMarketAPI.repository.VeiculoRepository;
 import com.MecanicaCeleste.AutoMarketAPI.repository.VendaRepository;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,6 +33,9 @@ public class CarrinhoController {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @SuppressWarnings("unchecked")
     private List<Veiculo> getCarrinho(HttpSession session) {
         List<Veiculo> itens = (List<Veiculo>) session.getAttribute("carrinho");
@@ -42,10 +48,8 @@ public class CarrinhoController {
 
     @GetMapping
     public String exibirCarrinho(HttpSession session, Model model) {
-        // Recupera itens da sessão
         List<Veiculo> itens = getCarrinho(session);
 
-        // Calcula total
         BigDecimal total = itens.stream()
                 .map(Veiculo::getPreco)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -53,20 +57,27 @@ public class CarrinhoController {
         model.addAttribute("itens", itens);
         model.addAttribute("total", total);
 
-        // Envia lista de clientes para o SELECT do formulário
+        // Clientes no select
         model.addAttribute("clientes", clienteRepository.findAll());
 
-        // Garante que a navbar funcione
-        String papel = (String) session.getAttribute("papel");
-        model.addAttribute("papel", papel);
+        // TODOS os usuários cadastrados (ADMIN e VENDEDOR)
+        model.addAttribute("usuariosSistema", usuarioRepository.findAll());
+
+        // Papel para navbar
+        model.addAttribute("papel", session.getAttribute("papel"));
 
         return "carrinho";
     }
 
     @GetMapping("/adicionar/{id}")
-    public String adicionar(@PathVariable Long id, HttpSession session) {
+    public String adicionar(@PathVariable Long id,
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
+
         Veiculo veiculo = veiculoRepository.findById(id).orElseThrow();
         getCarrinho(session).add(veiculo);
+
+        redirectAttributes.addFlashAttribute("mensagem", "Item adicionado ao carrinho!");
         return "redirect:/veiculos";
     }
 
@@ -76,57 +87,59 @@ public class CarrinhoController {
         return "redirect:/carrinho";
     }
 
-    @PostMapping("/desconto")
-    public String aplicarDesconto(@RequestParam BigDecimal porcentagem, HttpSession session, Model model) {
-        List<Veiculo> itens = getCarrinho(session);
-
-        BigDecimal total = itens.stream()
-                .map(Veiculo::getPreco)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        // Lógica de cálculo
-        BigDecimal valorDesconto = total.multiply(porcentagem.divide(new BigDecimal(100)));
-        BigDecimal totalFinal = total.subtract(valorDesconto);
-
-        // Atualiza a tela mantendo os dados
-        model.addAttribute("itens", itens);
-        model.addAttribute("total", totalFinal);
-        model.addAttribute("clientes", clienteRepository.findAll()); // Recarrega clientes
-
-        String papel = (String) session.getAttribute("papel");
-        model.addAttribute("papel", papel);
-
-        return "carrinho";
-    }
-
     @PostMapping("/finalizar")
     @Transactional
-    public String finalizar(HttpSession session, @RequestParam(required = false) Long clienteId) {
+    public String finalizar(HttpSession session,
+                            @RequestParam(required = false) Long clienteId,
+                            @RequestParam(required = false) Long vendedorId,
+                            RedirectAttributes redirectAttributes) {
+
         List<Veiculo> itens = getCarrinho(session);
 
-        // Busca o cliente SE um ID foi selecionado
+        if (itens.isEmpty()) {
+            redirectAttributes.addFlashAttribute("mensagem", "Carrinho vazio!");
+            return "redirect:/carrinho";
+        }
+
+        // Cliente (pode ser null)
         Cliente cliente = null;
         if (clienteId != null) {
             cliente = clienteRepository.findById(clienteId).orElse(null);
         }
 
+        // Vendedor (USUARIO do sistema) - pode ser null se não selecionar
+        Usuario vendedor = null;
+        if (vendedorId != null) {
+            vendedor = usuarioRepository.findById(vendedorId).orElse(null);
+        }
+
         for (Veiculo item : itens) {
+
+            // baixa no estoque (antes de salvar a venda)
+            Veiculo vBanco = veiculoRepository.findById(item.getId()).orElseThrow();
+            if (vBanco.getEstoque() <= 0) {
+                redirectAttributes.addFlashAttribute(
+                        "mensagem",
+                        "Não foi possível finalizar: o veículo " + vBanco.getModelo() + " está sem estoque."
+                );
+                return "redirect:/carrinho";
+            }
+
+            vBanco.setEstoque(vBanco.getEstoque() - 1);
+            veiculoRepository.save(vBanco);
+
+            // salva venda
             Venda venda = new Venda();
-            venda.setVeiculo(item);
-            venda.setPrecoVenda(item.getPreco());
-            venda.setCliente(cliente); // Salva o cliente (ou null se for venda direta)
+            venda.setVeiculo(vBanco); // usa o do banco
+            venda.setPrecoVenda(vBanco.getPreco());
+            venda.setCliente(cliente);
+            venda.setVendedor(vendedor);
 
             vendaRepository.save(venda);
-
-            // Baixa no estoque
-            Veiculo vBanco = veiculoRepository.findById(item.getId()).orElseThrow();
-            if (vBanco.getEstoque() > 0) {
-                vBanco.setEstoque(vBanco.getEstoque() - 1);
-                veiculoRepository.save(vBanco);
-            }
         }
 
         session.removeAttribute("carrinho");
-        return "redirect:/home";
+        redirectAttributes.addFlashAttribute("mensagem", "Venda realizada com sucesso!");
+        return "redirect:/carrinho";
     }
 }

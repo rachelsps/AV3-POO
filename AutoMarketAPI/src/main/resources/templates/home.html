@@ -158,18 +158,22 @@
             </div>
         </div>
 
-        <!-- SOMENTE ADMIN -->
-        <div class="col-md-4" th:if="${papel == 'ADMIN'}">
-            <div class="card h-100 shadow-sm border-success-subtle">
-                <div class="card-body">
-                    <h5 class="card-title">Gestão de Estoque</h5>
-                    <a class="btn btn-outline-success" th:href="@{/relatorios/estoque(papel=${papel})}">
-                        Gerenciar estoque
-                    </a>
-                </div>
-            </div>
+        <!-- Aluguéis -->
+<div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Aluguéis</h5>
+            <p class="card-text">
+                Registrar e gerenciar alugueis de veículos.
+            </p>
+            <a class="btn btn-primary" th:href="@{/alugueis}">
+                Acessar
+            </a>
         </div>
+    </div>
+</div>
 
+        <!-- SOMENTE ADMIN -->
         <div class="col-md-4" th:if="${papel == 'ADMIN'}">
             <div class="card h-100 shadow-sm border-success-subtle">
                 <div class="card-body">
